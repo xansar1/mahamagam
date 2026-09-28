@@ -387,3 +387,147 @@
 @media(max-width:380px){
   .social-links{grid-template-columns:1fr}.social-link{justify-content:flex-start;padding:10px 12px}.social-link span{font-size:.66rem}
 }
+
+
+/* =========================================================
+   MAHAMAGHAM 2027 — HOME HERITAGE REDESIGN
+   Inspired by the supplied visual reference, rebuilt as live HTML/CSS.
+   ========================================================= */
+.home-v2{--heritage-green:#073a2d;--heritage-green-2:#0a4a39;--heritage-deep:#052b23;--heritage-gold:#d5a545;--heritage-gold-soft:#f0cf7b}
+.home-v2 .announcement{background:#062e25;color:rgba(255,255,255,.68);border-bottom:1px solid rgba(213,165,69,.35)}
+.home-v2 .announcement strong{color:var(--heritage-gold-soft)}
+.home-v2 .site-header:not(.scrolled){top:31px;background:rgba(5,43,35,.78);backdrop-filter:blur(14px);border-bottom:1px solid rgba(213,165,69,.28)}
+.home-v2 .site-header:not(.scrolled) .header-inner{height:82px}
+.home-v2 .site-header:not(.scrolled) .brand,.home-v2 .site-header:not(.scrolled) .nav a{color:#fff}
+.home-v2 .site-header:not(.scrolled) .nav-cta{background:linear-gradient(135deg,#e7bd5d,#c8912e);color:#1e160b;border-color:transparent!important;padding:13px 18px!important;box-shadow:0 8px 25px rgba(213,165,69,.18)}
+.home-v2 .site-header:not(.scrolled) .nav-cta:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(213,165,69,.28)}
+
+.hero-2027{min-height:760px!important;display:flex!important;align-items:center!important;background:var(--heritage-deep)!important;position:relative;overflow:hidden;padding-top:112px}
+.hero-2027:before{content:'';position:absolute!important;inset:0 0 0 48%!important;background:url('../images/mahamagham-river-crowd-2027.jpg') center/cover no-repeat!important;opacity:1!important;filter:saturate(.96) contrast(1.05) brightness(.82)!important;transform:scale(1.03)!important;z-index:0!important}
+.hero-2027:after{content:'';position:absolute!important;inset:0!important;background:linear-gradient(90deg,#073a2d 0%,#073a2d 39%,rgba(7,58,45,.94) 48%,rgba(7,58,45,.38) 67%,rgba(5,28,25,.12) 100%),linear-gradient(0deg,rgba(4,34,28,.58),transparent 46%)!important;z-index:1!important}
+.hero-2027-pattern{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.18;background-image:radial-gradient(circle at 0 0,transparent 0 44px,rgba(213,165,69,.44) 45px 46px,transparent 47px),radial-gradient(circle at 100% 0,transparent 0 44px,rgba(213,165,69,.44) 45px 46px,transparent 47px);background-size:170px 170px;background-repeat:no-repeat}
+.hero-2027-grid{position:relative;z-index:3;display:grid;grid-template-columns:210px minmax(0,620px);align-items:center;gap:34px;padding:82px 0 70px}
+.hero-emblem-wrap{align-self:start;padding-top:12px}.hero-emblem{width:205px;height:205px;object-fit:contain;filter:drop-shadow(0 18px 30px rgba(0,0,0,.34))}
+.hero-2027-copy{min-width:0}.hero-place{display:flex;align-items:center;gap:13px;color:var(--heritage-gold-soft);font-family:var(--serif);font-size:.82rem;letter-spacing:.34em;font-weight:600}.hero-place span{width:58px;height:1px;background:var(--heritage-gold)}
+.hero-2027 h1{margin:10px 0 4px!important;max-width:none!important;font-family:var(--serif);font-weight:400;letter-spacing:-.045em!important;line-height:.78!important}
+.hero-2027 .hero-name{font-size:clamp(4.7rem,7.8vw,8.2rem)!important;color:#f2c96f!important;text-shadow:0 3px 22px rgba(0,0,0,.22)}
+.hero-year{display:block;color:#fff;font-size:clamp(4.2rem,6.8vw,7rem);letter-spacing:-.04em;line-height:.84;margin-top:9px}
+.hero-tagline-2027{font-family:var(--serif);font-size:clamp(1.28rem,2vw,2rem);color:#f7efe1;margin:23px 0 18px;line-height:1.2}
+.hero-event-meta{display:flex;flex-direction:column;gap:10px;margin-top:16px}.hero-event-meta>div{display:flex;align-items:center;gap:13px;color:#fff}.hero-event-meta .icon-svg{width:23px;height:23px;color:var(--heritage-gold-soft);stroke-width:2}.hero-event-meta span{display:flex;flex-direction:column;line-height:1.25}.hero-event-meta small{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.48);margin-bottom:2px}.hero-event-meta strong{font-family:var(--serif);font-size:1.03rem;font-weight:400;color:#fff}
+.hero-2027 .hero-actions{margin-top:28px!important;gap:12px!important}.hero-2027 .hero-actions .btn{min-width:0!important;padding:15px 20px!important}.hero-2027 .hero-plan{border-color:rgba(240,207,123,.65);color:#fff;background:rgba(2,30,24,.22)}.hero-2027 .hero-plan:hover{background:#fff;color:#172019}
+.hero-2027 .hero-scroll{right:2.4vw;bottom:28px}
+
+.home-panorama{position:relative;height:250px;overflow:hidden;background:#0d352e;border-top:1px solid rgba(213,165,69,.65);border-bottom:1px solid rgba(213,165,69,.65)}
+.home-panorama-image{position:absolute;inset:0;background:url('https://mahamagham.deepsign.in/wp-content/uploads/2026/09/IMG_20260125_183047-1024x768.jpg') center 48%/cover no-repeat;filter:saturate(.85) contrast(1.04);transform:scale(1.02)}
+.home-panorama:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,44,35,.58),transparent 50%,rgba(5,44,35,.35)),linear-gradient(0deg,rgba(4,32,27,.48),transparent 55%)}
+.home-panorama-caption{position:absolute;z-index:2;left:50%;transform:translateX(-50%);bottom:23px;color:#fff;display:flex;align-items:end;justify-content:space-between;gap:25px}.home-panorama-caption span{font-size:.62rem;letter-spacing:.22em;color:var(--heritage-gold-soft)}.home-panorama-caption strong{font-family:var(--serif);font-weight:400;font-size:1.5rem}
+
+/* Story card: use river visual, no hero repetition */
+.home-v2 .heritage-image{background-image:url('https://mahamagham.deepsign.in/wp-content/uploads/2026/09/nila-concept-e1790355170289-1024x896.webp')}
+
+/* Reference-inspired five-pillar section: icons instead of repeated photographs */
+.experience-heritage{background:#fbf7ed;position:relative;overflow:hidden;border-top:1px solid rgba(213,165,69,.12);border-bottom:1px solid rgba(213,165,69,.16)}
+.experience-heritage:before,.experience-heritage:after{content:'';position:absolute;width:300px;height:300px;border:1px solid rgba(174,126,45,.09);border-radius:50%;top:45%;transform:translateY(-50%);box-shadow:0 0 0 26px rgba(174,126,45,.025),0 0 0 52px rgba(174,126,45,.018)}.experience-heritage:before{left:-170px}.experience-heritage:after{right:-170px}
+.experience-heading-center{text-align:center;max-width:760px;margin:0 auto}.experience-heading-center .eyebrow{justify-content:center}.experience-heading-center .eyebrow:after{content:'';width:36px;height:1px;background:currentColor}.experience-heading-center .section-title{font-size:clamp(3rem,5vw,5rem);margin-bottom:13px}.experience-heading-center>p{color:var(--muted);margin:0 auto;max-width:600px}
+.experience-icon-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:50px}
+.experience-icon-card{min-height:315px;border:1px solid rgba(194,145,56,.38);background:rgba(255,252,245,.78);border-radius:12px;padding:25px 18px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;transition:.35s ease;box-shadow:0 10px 35px rgba(52,37,24,.035)}
+.experience-icon-card:hover{transform:translateY(-7px);background:#fff;box-shadow:0 18px 45px rgba(52,37,24,.10);border-color:rgba(194,145,56,.62)}
+.experience-medallion{width:82px;height:82px;border:1px solid rgba(194,145,56,.60);border-radius:50%;display:grid;place-items:center;color:#a16a1e;position:relative;background:#fffaf0}.experience-medallion:before{content:'';position:absolute;inset:7px;border:1px dashed rgba(194,145,56,.34);border-radius:50%}.experience-medallion .icon-svg{width:38px;height:38px;stroke-width:1.45;position:relative;z-index:2}
+.experience-icon-card h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;margin:20px 0 7px;color:#19382f}.experience-icon-card p{font-family:var(--serif);font-size:.98rem;line-height:1.38;color:#5f554c;margin:0 0 18px}.experience-icon-card span{margin-top:auto;font-size:.61rem;letter-spacing:.12em;text-transform:uppercase;color:#8b5d24;font-weight:600}
+
+/* Make remaining image sections visually distinct */
+.home-v2 .festival-signature-image{background-image:url('https://mahamagham.deepsign.in/wp-content/uploads/2026/09/thirunavaya-kumbh-mela-jpg-1-e1790499206345.webp');background-position:center 44%}
+.home-v2 .aarti-card-v2{background-image:url('https://mahamagham.deepsign.in/wp-content/uploads/2026/09/mahamagham-hero.webp');background-position:center 58%}
+
+@media(max-width:1050px){
+  .hero-2027-grid{grid-template-columns:170px minmax(0,560px);gap:24px}.hero-emblem{width:165px;height:165px}.experience-icon-grid{grid-template-columns:repeat(3,1fr)}.experience-icon-card:nth-child(4),.experience-icon-card:nth-child(5){min-height:285px}
+}
+@media(max-width:820px){
+  .home-v2 .site-header:not(.scrolled){top:0!important;background:linear-gradient(180deg,rgba(5,43,35,.95),rgba(5,43,35,.70));border-bottom:1px solid rgba(213,165,69,.22)}
+  .hero-2027{min-height:auto!important;padding-top:72px;align-items:stretch!important}.hero-2027:before{inset:0!important;background-position:65% center!important;filter:saturate(.9) contrast(1.04) brightness(.62)!important}.hero-2027:after{background:linear-gradient(0deg,#062f27 0%,rgba(6,47,39,.92) 45%,rgba(5,42,34,.65) 72%,rgba(5,36,30,.52) 100%)!important}
+  .hero-2027-grid{display:block;padding:58px 0 62px}.hero-emblem-wrap{padding:0;margin-bottom:16px}.hero-emblem{width:118px;height:118px}.hero-place{font-size:.62rem;letter-spacing:.24em}.hero-place span{width:40px}.hero-2027 .hero-name{font-size:clamp(3.8rem,16vw,5.7rem)!important;white-space:normal!important}.hero-year{font-size:clamp(3.7rem,15vw,5.4rem)}.hero-tagline-2027{font-size:1.2rem;max-width:340px}.hero-event-meta{margin-top:18px}.hero-event-meta strong{font-size:.92rem}.hero-2027 .hero-actions{display:flex!important;flex-wrap:wrap!important}.hero-2027 .hero-actions .btn{width:auto!important}.hero-2027 .hero-scroll{display:none}
+  .home-panorama{height:190px}.home-panorama-caption{bottom:15px;align-items:flex-start;flex-direction:column;gap:3px}.home-panorama-caption strong{font-size:1.05rem}
+  .experience-icon-grid{grid-template-columns:1fr 1fr;gap:10px}.experience-icon-card{min-height:290px}.experience-icon-card:last-child{grid-column:1/-1;min-height:260px;max-width:none}.experience-medallion{width:72px;height:72px}.experience-medallion .icon-svg{width:32px;height:32px}
+}
+@media(max-width:560px){
+  .hero-2027-grid{padding:48px 0 54px}.hero-emblem{width:102px;height:102px}.hero-2027 .hero-name{font-size:15.2vw!important}.hero-year{font-size:14.6vw}.hero-tagline-2027{font-size:1.08rem}.hero-event-meta>div{align-items:flex-start}.hero-2027 .hero-actions{gap:9px!important}.hero-2027 .hero-actions .btn{font-size:.62rem!important;padding:12px 13px!important}.home-panorama{height:155px}.experience-icon-grid{grid-template-columns:1fr}.experience-icon-card,.experience-icon-card:last-child{grid-column:auto;min-height:245px;padding:22px 20px}.experience-heading-center .section-title{font-size:2.75rem}.experience-icon-card p{max-width:330px}.experience-medallion{width:68px;height:68px}
+}
+
+
+/* =========================================================
+   V6 — REAL PHOTOS + DESKTOP NAV ALIGNMENT
+   ========================================================= */
+
+/* Keep every desktop nav label on one clean baseline. */
+@media (min-width: 1121px){
+  .header-inner{width:min(1420px,calc(100% - 56px));gap:20px}
+  .brand{flex:0 0 auto;min-width:0}
+  .brand-logo{width:54px;height:54px}
+  .brand-name{font-size:.92rem;letter-spacing:.105em}
+  .brand-sub{font-size:.50rem;letter-spacing:.17em}
+  .nav{flex:1;justify-content:flex-end;gap:clamp(14px,1.35vw,24px);min-width:0}
+  .nav a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap;font-size:.70rem;letter-spacing:.06em;line-height:1}
+  .nav-cta{padding:12px 18px!important;min-height:46px;justify-content:center}
+  .home-v2 .site-header:not(.scrolled) .header-inner{height:82px}
+}
+@media (min-width:821px) and (max-width:1120px){
+  .header-inner{width:min(100% - 30px,1080px);gap:12px}
+  .brand-copy{display:none}
+  .brand-logo{width:52px;height:52px}
+  .nav{gap:11px}
+  .nav a{white-space:nowrap;font-size:.61rem;letter-spacing:.045em}
+  .nav-cta{padding:10px 13px!important}
+}
+
+/* Real user-supplied imagery replaces concept/AI imagery on the home page. */
+.home-v2 .heritage-image{
+  background-image:url('../images/living-tradition.jpg')!important;
+  background-position:center 34%!important;
+  background-size:cover!important;
+}
+.home-v2 .heritage-image-main::before{display:none!important}
+.home-v2 .festival-signature-image{
+  background-image:url('../images/gallery/gallery-11.webp')!important;
+  background-position:center 45%!important;
+}
+.home-v2 .aarti-card-v2{
+  background-image:url('../images/nila-aarathi.jpg')!important;
+  background-position:center 48%!important;
+}
+.home-v2 .home-panorama-image{
+  background-image:url('../images/gallery/gallery-08.webp')!important;
+  background-position:center 42%!important;
+}
+
+/* Home gallery teaser now uses real Mahamagham photographs. */
+.home-v2 .gallery-real-home .ph:after{display:none!important}
+.home-v2 .gallery-real-07{background-image:url('../images/gallery/gallery-07.webp')!important;background-position:center 45%!important}
+.home-v2 .gallery-real-02{background-image:url('../images/gallery/gallery-02.webp')!important;background-position:center 35%!important}
+.home-v2 .gallery-real-03{background-image:url('../images/gallery/gallery-03.webp')!important;background-position:center 48%!important}
+.home-v2 .gallery-real-04{background-image:url('../images/gallery/gallery-04.webp')!important;background-position:center 45%!important}
+
+/* Gallery hero and real-photo grid. */
+.gallery-page-hero{background:#0c352d url('../images/gallery/gallery-08.webp') center 45%/cover no-repeat!important}
+.gallery-page-hero:before{display:none!important}
+.gallery-page-hero:after{background:linear-gradient(90deg,rgba(5,34,29,.92),rgba(5,34,29,.42) 58%,rgba(5,34,29,.18)),linear-gradient(0deg,rgba(5,28,25,.65),transparent 60%)!important}
+.real-gallery-grid .gallery-card{box-shadow:0 12px 34px rgba(40,28,20,.08)}
+.real-gallery-grid .gallery-card .art{background-repeat:no-repeat;background-size:cover}
+.real-gallery-grid .gallery-card:hover{box-shadow:0 22px 50px rgba(40,28,20,.15)}
+
+@media(max-width:820px){
+  .home-v2 .heritage-image{background-position:center 28%!important}
+  .home-v2 .aarti-card-v2{background-position:58% center!important}
+  .gallery-page-hero{background-position:center!important}
+}
+
+
+/* =========================================================
+   V7 — HOME IMAGE PLACEMENT CORRECTION
+   Removed the extra panorama strip below the hero and moved
+   the supplied river/crowd photograph into the festival panel.
+   ========================================================= */
+.home-v2 .festival-signature-image{
+  background-image:url('../images/festival-river-crowd.jpg')!important;
+  background-position:center 46%!important;
+  background-size:cover!important;
+}
