@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2830"/>
+      <stop offset="0.45" stop-color="#7c321f"/>
+      <stop offset="0.72" stop-color="#d77b36"/>
+      <stop offset="1" stop-color="#f0c577"/>
+    </linearGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#9d5d33"/>
+      <stop offset="1" stop-color="#132d33"/>
+    </linearGradient>
+    <radialGradient id="sun">
+      <stop offset="0" stop-color="#fff6c8"/>
+      <stop offset="0.45" stop-color="#f5c465"/>
+      <stop offset="1" stop-color="#f5c465" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="420" cy="360" r="135" fill="url(#sun)" filter="url(#glow)"/>
+  <circle cx="420" cy="360" r="48" fill="#ffd67a"/>
+  <path d="M0 500 C250 430 430 500 650 450 C870 400 1080 440 1600 370 L1600 650 L0 650Z" fill="#14282a" opacity=".88"/>
+  <path d="M0 560 C300 520 500 590 760 535 C1030 480 1270 520 1600 470 L1600 900 L0 900Z" fill="url(#river)"/>
+  <path d="M0 610 C320 590 520 650 850 585 C1080 540 1320 555 1600 525" fill="none" stroke="#f2bf67" stroke-opacity=".38" stroke-width="5"/>
+  <path d="M0 660 C320 640 520 700 850 635 C1080 590 1320 605 1600 575" fill="none" stroke="#f6d794" stroke-opacity=".15" stroke-width="3"/>
+  <!-- temple silhouettes -->
+  <g fill="#111b1d">
+    <rect x="1080" y="445" width="360" height="170"/>
+    <polygon points="1030,455 1260,325 1490,455"/>
+    <rect x="1215" y="265" width="92" height="82"/>
+    <polygon points="1200,275 1260,200 1320,275"/>
+    <rect x="1360" y="395" width="160" height="220"/>
+    <polygon points="1325,405 1440,320 1555,405"/>
+  </g>
+  <!-- deepastambha -->
+  <g fill="#221913">
+    <rect x="930" y="260" width="16" height="320"/>
+    <rect x="900" y="300" width="78" height="8" rx="4"/>
+    <rect x="900" y="350" width="78" height="8" rx="4"/>
+    <rect x="900" y="400" width="78" height="8" rx="4"/>
+    <rect x="900" y="450" width="78" height="8" rx="4"/>
+    <rect x="900" y="500" width="78" height="8" rx="4"/>
+    <polygon points="938,215 914,265 962,265"/>
+  </g>
+  <g fill="#ffd07a">
+    <circle cx="905" cy="304" r="5"/><circle cx="973" cy="304" r="5"/>
+    <circle cx="905" cy="354" r="5"/><circle cx="973" cy="354" r="5"/>
+    <circle cx="905" cy="404" r="5"/><circle cx="973" cy="404" r="5"/>
+    <circle cx="905" cy="454" r="5"/><circle cx="973" cy="454" r="5"/>
+    <circle cx="905" cy="504" r="5"/><circle cx="973" cy="504" r="5"/>
+  </g>
+  <!-- foreground lamps -->
+  <g fill="#130d0a">
+    <ellipse cx="150" cy="790" rx="100" ry="32"/><rect x="140" y="690" width="20" height="110"/>
+    <ellipse cx="150" cy="680" rx="55" ry="16"/>
+  </g>
+  <g fill="#ffca65"><path d="M150 625 C125 660 140 690 150 694 C160 690 175 660 150 625Z"/></g>
+  <rect width="1600" height="900" fill="#071112" opacity=".18"/>
+</svg>
