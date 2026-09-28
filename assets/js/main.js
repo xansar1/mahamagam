@@ -6,11 +6,11 @@ const SITE = {
   whatsappDisplay: '+91 94950 41196',
   instagram: 'https://www.instagram.com/mahamagha_mahotsavam/',
   youtube: 'https://www.youtube.com/channel/UC5oJ4zNocTQKuPHiYaDxElA',
-  location: 'Sri Panch Dasnam Juna Akhada, Thirunnavaya, Malappuram, Keralam 676301'
+  location: 'Sri Panch Dasnam Juna Akhada, Thirunnavaya, Malappuram, Kerala 676301'
 };
 
 const navItems = [
-  ['index.html','Home','home'], ['about.html','About','about'], ['festival.html','Festival','festival'],
+  ['index.html','Home','home'], ['about.html','About Mahamagham','about'], ['festival.html','Programme','festival'],
   ['pilgrim-guide.html','Pilgrim Guide','guide'], ['get-involved.html','Get Involved','involved'],
   ['gallery.html','Gallery','gallery'], ['contact.html','Contact','contact']
 ];
@@ -36,11 +36,11 @@ function injectShell(){
       <header class="site-header ${inner?'inner-header':''}" id="header">
         <div class="header-inner">
           <a class="brand" href="index.html" aria-label="Mahamagham home">
-            <img class="brand-logo" src="assets/images/mahamagham-logo.png" alt="Mahamagham official logo"><span class="brand-copy"><span class="brand-name">MAHAMAGHAM</span><span class="brand-sub">Thirunavaya · Keralam</span></span>
+            <img class="brand-logo" src="assets/images/mahamagham-logo.png" alt="Mahamagham official logo"><span class="brand-copy"><span class="brand-name">MAHAMAGHAM</span><span class="brand-sub">Thirunavaya · Kerala</span></span>
           </a>
           <nav class="nav" id="nav" aria-label="Primary navigation">
             ${navItems.map(([href,label,key])=>`<a href="${href}" class="${page===key?'active':''}">${label}</a>`).join('')}
-            <a class="nav-cta" href="pilgrim-guide.html">Plan your visit</a>
+            <a class="nav-cta" href="get-involved.html">Volunteer Registration</a>
           </nav>
           <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
         </div>
@@ -70,13 +70,13 @@ function injectShell(){
               </div>
             </div>
           </div>
-          <div class="footer-bottom"><span>© 2026 Mahamagham. All rights reserved.</span><span>Thirunavaya · Keralam · India</span></div>
+          <div class="footer-bottom"><span>© 2026 Mahamagham. All rights reserved.</span><span>Thirunavaya · Kerala · India</span></div>
         </div>
       </footer>`;
   }
   const mobile = document.getElementById('mobile-actions');
   if(mobile){
-    mobile.innerHTML = `<div class="mobile-actions"><a href="festival.html">Programme</a><a href="https://www.google.com/maps/search/?api=1&query=Thirunavaya%20Keralam" target="_blank">Directions</a><a href="https://wa.me/${SITE.whatsapp}" target="_blank">WhatsApp</a><a href="contact.html">Contact</a></div>`;
+    mobile.innerHTML = `<div class="mobile-actions"><a href="festival.html">Programme</a><a href="https://www.google.com/maps/search/?api=1&query=Thirunavaya%20Kerala" target="_blank">Directions</a><a href="https://wa.me/${SITE.whatsapp}" target="_blank">WhatsApp</a><a href="contact.html">Contact</a></div>`;
   }
   if(!document.querySelector('.scroll-progress')){
     document.body.insertAdjacentHTML('beforeend', `
