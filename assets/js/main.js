@@ -1,8 +1,8 @@
 
 const SITE = {
   email: 'mail@mahamagham.com',
-  phone: '+91 94950 41196',
-  whatsapp: '919495041196',
+  phone: '+91 88913 85222',
+  whatsapp: '918891385222',
   instagram: 'https://www.instagram.com/mahamagha_mahotsavam/',
   youtube: 'https://www.youtube.com/channel/UC5oJ4zNocTQKuPHiYaDxElA',
   location: 'Sri Panch Dasnam Juna Akhada, Thirunnavaya, Malappuram, Kerala 676301'
@@ -67,8 +67,116 @@ function initReveal(){const els=[...document.querySelectorAll('[data-reveal]')];
 function initFaq(){document.querySelectorAll('.faq-row button').forEach(b=>b.addEventListener('click',()=>b.closest('.faq-row').classList.toggle('open')))}
 function initTabs(){document.querySelectorAll('[data-tabs]').forEach(box=>{const bs=box.querySelectorAll('[data-tab]'), ps=box.querySelectorAll('[data-panel]');bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.classList.remove('active'));ps.forEach(x=>x.classList.remove('active'));b.classList.add('active');box.querySelector(`[data-panel="${b.dataset.tab}"]`)?.classList.add('active')}))})}
 function initFilters(){document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');const f=b.dataset.filter;document.querySelectorAll('[data-gallery-item]').forEach(x=>x.hidden=!(f==='all'||x.dataset.category===f))}))}
-function initForms(){document.querySelectorAll('form[data-demo-form]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();const n=f.querySelector('[name="name"]')?.value||'Thank you';const box=f.closest('.form-card')||f.parentElement;box.querySelector('.form-success')?.classList.add('show');f.reset()}))}
+function showFormStatus(el,message,type='info'){
+  if(!el)return;
+  el.textContent=message;
+  el.className=`form-status show ${type}`;
+}
+async function jsonRequest(url,options={}){
+  const res=await fetch(url,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
+  let data={};
+  try{data=await res.json()}catch(_){data={}}
+  if(!res.ok)throw new Error(data.error||data.message||`Request failed (${res.status})`);
+  return data;
+}
+function initForms(){
+  document.querySelectorAll('form[data-support-enquiry]').forEach(f=>f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=f.querySelector('button[type="submit"]');
+    const status=f.parentElement.querySelector('.form-status');
+    const payload=Object.fromEntries(new FormData(f).entries());
+    btn.disabled=true; btn.dataset.label=btn.textContent; btn.textContent='Submitting…';
+    showFormStatus(status,'Submitting your enquiry securely…','info');
+    try{
+      await jsonRequest('/api/enquiries',{method:'POST',body:JSON.stringify(payload)});
+      showFormStatus(status,'Thank you. Your enquiry has been recorded for follow-up.','success');
+      f.reset();
+    }catch(err){
+      showFormStatus(status,`Online submission is not active yet. Please contact ${SITE.phone} or ${SITE.email}.`,'error');
+    }finally{btn.disabled=false;btn.textContent=btn.dataset.label||'Submit enquiry →'}
+  }))
+}
+let paymentConfigPromise;
+function getPaymentConfig(){
+  if(!paymentConfigPromise)paymentConfigPromise=jsonRequest('/api/payment-config').catch(()=>({enabled:false}));
+  return paymentConfigPromise;
+}
+function loadRazorpay(){
+  if(window.Razorpay)return Promise.resolve();
+  return new Promise((resolve,reject)=>{
+    const existing=document.querySelector('script[data-razorpay-checkout]');
+    if(existing){existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',reject,{once:true});return}
+    const script=document.createElement('script');script.src='https://checkout.razorpay.com/v1/checkout.js';script.async=true;script.dataset.razorpayCheckout='true';script.onload=resolve;script.onerror=()=>reject(new Error('Unable to load secure checkout'));document.head.appendChild(script);
+  })
+}
+function initSupportPayments(){
+  const modal=document.getElementById('checkoutModal');
+  const form=document.getElementById('paymentForm');
+  const availability=document.getElementById('paymentAvailability');
+  const status=document.getElementById('checkoutStatus');
+  if(!modal||!form)return;
+  const note=availability?.closest('.checkout-note');
+  const open=async(btn)=>{
+    form.elements.kind.value=btn.dataset.kind||'donation';
+    form.elements.category.value=btn.dataset.category||'General support';
+    document.getElementById('checkoutPurpose').textContent=`Purpose: ${form.elements.category.value}`;
+    modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');
+    showFormStatus(status,'','info');status?.classList.remove('show');
+    const cfg=await getPaymentConfig();
+    if(cfg.enabled){availability.textContent='Secure Razorpay checkout is available.';note?.classList.add('ready');note?.classList.remove('unavailable')}
+    else{availability.textContent='Payment gateway setup is pending organiser credentials.';note?.classList.add('unavailable');note?.classList.remove('ready')}
+  };
+  const close=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open')};
+  document.querySelectorAll('[data-payment-open]').forEach(btn=>btn.addEventListener('click',()=>open(btn)));
+  document.querySelectorAll('[data-checkout-close]').forEach(btn=>btn.addEventListener('click',close));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))close()});
+  document.querySelectorAll('[data-enquiry-open]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=document.querySelector('form[data-support-enquiry]');if(!target)return;
+    const interest=target.elements.interest,category=target.elements.category;
+    if(interest)interest.value=btn.dataset.kind||'Sponsorship'; if(category)category.value=btn.dataset.category||'';
+    document.getElementById('support-form')?.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>target.elements.name?.focus(),450);
+  }));
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const submit=form.querySelector('.checkout-submit');
+    submit.disabled=true;submit.dataset.label=submit.textContent;submit.textContent='Preparing checkout…';
+    showFormStatus(status,'Preparing a secure payment order…','info');
+    try{
+      const cfg=await getPaymentConfig();
+      if(!cfg.enabled)throw new Error('Payment gateway is not enabled yet.');
+      const payload=Object.fromEntries(new FormData(form).entries());
+      payload.amount=Number(payload.amount);
+      const order=await jsonRequest('/api/create-order',{method:'POST',body:JSON.stringify(payload)});
+      await loadRazorpay();
+      const rzp=new window.Razorpay({
+        key:order.keyId,amount:order.amount,currency:order.currency||'INR',name:'Mahamagham 2027',description:order.description||payload.category,order_id:order.orderId,
+        prefill:{name:payload.name,email:payload.email||'',contact:payload.phone},
+        notes:{intent_id:order.intentId,category:payload.category,kind:payload.kind},
+        theme:{color:'#073b31'},
+        handler:async response=>{
+          submit.textContent='Verifying payment…';
+          showFormStatus(status,'Payment received. Verifying with the server…','info');
+          try{
+            const verified=await jsonRequest('/api/verify-payment',{method:'POST',body:JSON.stringify({...response,intentId:order.intentId})});
+            showFormStatus(status,`Payment confirmed${verified.reference?` · Reference ${verified.reference}`:''}. Thank you for your support.`,'success');
+            form.reset(); submit.textContent='Payment confirmed ✓';
+          }catch(_){
+            showFormStatus(status,'Payment was received but confirmation is still being verified. Do not pay again. Please keep your Razorpay payment reference and contact the support team if needed.','error');
+            submit.disabled=true;submit.textContent='Verification pending';
+          }
+        },
+        modal:{ondismiss:()=>{showFormStatus(status,'Checkout closed. No payment was recorded from this attempt.','info');submit.disabled=false;submit.textContent=submit.dataset.label||'Continue to secure payment →'}}
+      });
+      rzp.on('payment.failed',r=>{showFormStatus(status,r?.error?.description||'Payment was not completed. You can try again.','error');submit.disabled=false;submit.textContent=submit.dataset.label||'Continue to secure payment →'});
+      rzp.open();
+    }catch(err){
+      showFormStatus(status,err.message==='Payment gateway is not enabled yet.'?'Secure payments are prepared but not live yet. Add the approved Razorpay and Supabase credentials on Vercel to activate this flow.':err.message,'error');
+      submit.disabled=false;submit.textContent=submit.dataset.label||'Continue to secure payment →';
+    }
+  });
+}
 function initScroll(){const line=document.querySelector('.scroll-line span'),top=document.getElementById('toTop');const u=()=>{const m=document.documentElement.scrollHeight-innerHeight,p=m?scrollY/m:0;line&&(line.style.transform=`scaleX(${p})`);top?.classList.toggle('show',scrollY>700)};addEventListener('scroll',u,{passive:true});top?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));u()}
 function initLivePulse(){document.querySelectorAll('.live-time').forEach(el=>{const d=new Date();el.textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})})}
 
-document.addEventListener('DOMContentLoaded',()=>{injectShell();initMenu();initHeader();initReveal();initFaq();initTabs();initFilters();initForms();initScroll();initLivePulse()});
+document.addEventListener('DOMContentLoaded',()=>{injectShell();initMenu();initHeader();initReveal();initFaq();initTabs();initFilters();initForms();initSupportPayments();initScroll();initLivePulse()});
