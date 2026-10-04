@@ -8,6 +8,9 @@ const SITE = {
   location: 'Sri Panch Dasnam Juna Akhada, Thirunnavaya, Malappuram, Kerala 676301'
 };
 
+const API_BASE=String(window.MAHAMAGHAM_API_BASE||'').replace(/\/+$/,'');
+const apiPath=path=>`${API_BASE}${path}`;
+
 const nav = [
   {key:'about', label:'About Us', href:'about.html', sub:[['About the Event','about.html#event'],['History','about.html#history'],['Significance','about.html#significance'],['Timeline','about.html#timeline'],['Organising Committee','about.html#committee'],['Contact','about.html#contact']]},
   {key:'programmes', label:'Programmes', href:'programmes.html', sub:[['Programme Schedule','programmes.html#schedule'],['Main Ceremony','programmes.html#ceremony'],['Pujas & Sevas','programmes.html#sevas'],['Other Events','programmes.html#events'],['Announcements','programmes.html#announcements']]},
@@ -88,7 +91,7 @@ function initForms(){
     btn.disabled=true; btn.dataset.label=btn.textContent; btn.textContent='Submitting…';
     showFormStatus(status,'Submitting your enquiry securely…','info');
     try{
-      await jsonRequest('/api/enquiries',{method:'POST',body:JSON.stringify(payload)});
+      await jsonRequest(apiPath('/api/enquiries'),{method:'POST',body:JSON.stringify(payload)});
       showFormStatus(status,'Thank you. Your enquiry has been recorded for follow-up.','success');
       f.reset();
     }catch(err){
@@ -98,7 +101,7 @@ function initForms(){
 }
 let paymentConfigPromise;
 function getPaymentConfig(){
-  if(!paymentConfigPromise)paymentConfigPromise=jsonRequest('/api/payment-config').catch(()=>({enabled:false}));
+  if(!paymentConfigPromise)paymentConfigPromise=jsonRequest(apiPath('/api/payment-config')).catch(()=>({enabled:false}));
   return paymentConfigPromise;
 }
 function loadRazorpay(){
@@ -116,49 +119,114 @@ function initSupportPayments(){
   const status=document.getElementById('checkoutStatus');
   if(!modal||!form)return;
   const note=availability?.closest('.checkout-note');
-  const open=async(btn)=>{
-    form.elements.kind.value=btn.dataset.kind||'donation';
-    form.elements.category.value=btn.dataset.category||'General support';
-    document.getElementById('checkoutPurpose').textContent=`Purpose: ${form.elements.category.value}`;
+  const amountInput=form.elements.amount;
+  const amountLabel=document.getElementById('paymentAmountLabel');
+  const amountHint=document.getElementById('paymentAmountHint');
+  const submit=form.querySelector('.checkout-submit');
+  const defaultSubmitLabel='Continue to secure payment →';
+
+  const findTriggerForOption=(optionKey)=>document.querySelector(`[data-payment-open][data-payment-option="${CSS.escape(optionKey)}"]`);
+  const open=async(triggerOrOption)=>{
+    const trigger=typeof triggerOrOption==='string'?findTriggerForOption(triggerOrOption):triggerOrOption;
+    const optionKey=typeof triggerOrOption==='string'?triggerOrOption:(trigger?.dataset.paymentOption||'donation-general');
+    const fallbackCategory=trigger?.dataset.category||'General support';
+    const cfg=await getPaymentConfig();
+    const option=cfg.options?.[optionKey]||null;
+    const category=option?.category||fallbackCategory;
+    const kind=option?.kind||trigger?.dataset.kind||'donation';
+
+    form.reset();
+    form.elements.optionKey.value=optionKey;
+    form.elements.kind.value=kind;
+    form.elements.category.value=category;
+    amountInput.readOnly=false;
+    amountInput.disabled=false;
+    amountInput.required=true;
+    amountInput.placeholder='Enter amount';
+    amountInput.value='';
+    if(amountLabel)amountLabel.textContent='Contribution amount (₹)';
+    if(amountHint)amountHint.textContent='';
+    submit.disabled=false;
+    submit.textContent=defaultSubmitLabel;
+    submit.dataset.label=defaultSubmitLabel;
+
+    let purposeText=`Purpose: ${category}`;
+    let optionReady=true;
+    if(option){
+      if(option.customAmount){
+        if(amountHint)amountHint.textContent='Enter the amount you wish to contribute.';
+      }else if(option.available&&Number(option.amountRupees)>0){
+        const fixed=Number(option.amountRupees);
+        amountInput.value=String(fixed);
+        amountInput.readOnly=true;
+        amountInput.placeholder='';
+        if(amountLabel)amountLabel.textContent='Contribution amount (fixed)';
+        if(amountHint)amountHint.textContent='This amount is set by the organising team and cannot be edited.';
+        purposeText+=` · ₹${fixed.toLocaleString('en-IN')}`;
+      }else{
+        optionReady=false;
+        amountInput.value='';
+        amountInput.readOnly=true;
+        amountInput.required=false;
+        amountInput.placeholder='Amount pending confirmation';
+        if(amountLabel)amountLabel.textContent='Contribution amount';
+        if(amountHint)amountHint.textContent='The organising team has not published the charge for this option yet.';
+      }
+    }
+
+    document.getElementById('checkoutPurpose').textContent=purposeText;
     modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');
     showFormStatus(status,'','info');status?.classList.remove('show');
-    const cfg=await getPaymentConfig();
-    if(cfg.enabled){availability.textContent='Secure Razorpay checkout is available.';note?.classList.add('ready');note?.classList.remove('unavailable')}
-    else{availability.textContent='Payment gateway setup is pending organiser credentials.';note?.classList.add('unavailable');note?.classList.remove('ready')}
+
+    if(!cfg.enabled){
+      availability.textContent='Online payment is temporarily unavailable until the live gateway is connected.';
+      note?.classList.add('unavailable');note?.classList.remove('ready');
+      submit.disabled=true;
+    }else if(!optionReady){
+      availability.textContent='This option will become payable after its authorised charge is added.';
+      note?.classList.add('unavailable');note?.classList.remove('ready');
+      submit.disabled=true;
+    }else{
+      availability.textContent='Online payment is available.';
+      note?.classList.add('ready');note?.classList.remove('unavailable');
+    }
   };
+
   const close=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open')};
-  document.querySelectorAll('[data-payment-open]').forEach(btn=>btn.addEventListener('click',()=>open(btn)));
+  document.querySelectorAll('[data-payment-open]').forEach(btn=>btn.addEventListener('click',e=>{e.preventDefault();open(btn)}));
   document.querySelectorAll('[data-checkout-close]').forEach(btn=>btn.addEventListener('click',close));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))close()});
-  document.querySelectorAll('[data-enquiry-open]').forEach(btn=>btn.addEventListener('click',()=>{
+
+  document.querySelectorAll('[data-enquiry-open]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.preventDefault();
     const target=document.querySelector('form[data-support-enquiry]');if(!target)return;
     const interest=target.elements.interest,category=target.elements.category;
     if(interest)interest.value=btn.dataset.kind||'Sponsorship'; if(category)category.value=btn.dataset.category||'';
     document.getElementById('support-form')?.scrollIntoView({behavior:'smooth',block:'center'});
     setTimeout(()=>target.elements.name?.focus(),450);
   }));
+
   form.addEventListener('submit',async e=>{
     e.preventDefault();
-    const submit=form.querySelector('.checkout-submit');
-    submit.disabled=true;submit.dataset.label=submit.textContent;submit.textContent='Preparing checkout…';
+    submit.disabled=true;submit.dataset.label=submit.textContent||defaultSubmitLabel;submit.textContent='Preparing checkout…';
     showFormStatus(status,'Preparing a secure payment order…','info');
     try{
       const cfg=await getPaymentConfig();
       if(!cfg.enabled)throw new Error('Payment gateway is not enabled yet.');
       const payload=Object.fromEntries(new FormData(form).entries());
       payload.amount=Number(payload.amount);
-      const order=await jsonRequest('/api/create-order',{method:'POST',body:JSON.stringify(payload)});
+      const order=await jsonRequest(apiPath('/api/create-order'),{method:'POST',body:JSON.stringify(payload)});
       await loadRazorpay();
       const rzp=new window.Razorpay({
         key:order.keyId,amount:order.amount,currency:order.currency||'INR',name:'Mahamagham 2027',description:order.description||payload.category,order_id:order.orderId,
         prefill:{name:payload.name,email:payload.email||'',contact:payload.phone},
-        notes:{intent_id:order.intentId,category:payload.category,kind:payload.kind},
+        notes:{intent_id:order.intentId,category:payload.category,kind:payload.kind,option_key:payload.optionKey},
         theme:{color:'#073b31'},
         handler:async response=>{
           submit.textContent='Verifying payment…';
           showFormStatus(status,'Payment received. Verifying with the server…','info');
           try{
-            const verified=await jsonRequest('/api/verify-payment',{method:'POST',body:JSON.stringify({...response,intentId:order.intentId})});
+            const verified=await jsonRequest(apiPath('/api/verify-payment'),{method:'POST',body:JSON.stringify({...response,intentId:order.intentId})});
             showFormStatus(status,`Payment confirmed${verified.reference?` · Reference ${verified.reference}`:''}. Thank you for your support.`,'success');
             form.reset(); submit.textContent='Payment confirmed ✓';
           }catch(_){
@@ -166,15 +234,19 @@ function initSupportPayments(){
             submit.disabled=true;submit.textContent='Verification pending';
           }
         },
-        modal:{ondismiss:()=>{showFormStatus(status,'Checkout closed. No payment was recorded from this attempt.','info');submit.disabled=false;submit.textContent=submit.dataset.label||'Continue to secure payment →'}}
+        modal:{ondismiss:()=>{showFormStatus(status,'Checkout closed. No payment was recorded from this attempt.','info');submit.disabled=false;submit.textContent=submit.dataset.label||defaultSubmitLabel}}
       });
-      rzp.on('payment.failed',r=>{showFormStatus(status,r?.error?.description||'Payment was not completed. You can try again.','error');submit.disabled=false;submit.textContent=submit.dataset.label||'Continue to secure payment →'});
+      rzp.on('payment.failed',r=>{showFormStatus(status,r?.error?.description||'Payment was not completed. You can try again.','error');submit.disabled=false;submit.textContent=submit.dataset.label||defaultSubmitLabel});
       rzp.open();
     }catch(err){
-      showFormStatus(status,err.message==='Payment gateway is not enabled yet.'?'Secure payments are prepared but not live yet. Add the approved Razorpay and Supabase credentials on Vercel to activate this flow.':err.message,'error');
-      submit.disabled=false;submit.textContent=submit.dataset.label||'Continue to secure payment →';
+      const message=err.message==='Payment gateway is not enabled yet.'?`Online payment is temporarily unavailable. Please contact ${SITE.phone} for assistance.`:err.message;
+      showFormStatus(status,message,'error');
+      submit.disabled=false;submit.textContent=submit.dataset.label||defaultSubmitLabel;
     }
   });
+
+  const requestedOption=new URLSearchParams(location.search).get('pay');
+  if(requestedOption)setTimeout(()=>open(requestedOption),120);
 }
 function initScroll(){const line=document.querySelector('.scroll-line span'),top=document.getElementById('toTop');const u=()=>{const m=document.documentElement.scrollHeight-innerHeight,p=m?scrollY/m:0;line&&(line.style.transform=`scaleX(${p})`);top?.classList.toggle('show',scrollY>700)};addEventListener('scroll',u,{passive:true});top?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));u()}
 function initLivePulse(){document.querySelectorAll('.live-time').forEach(el=>{const d=new Date();el.textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})})}

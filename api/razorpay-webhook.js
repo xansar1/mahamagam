@@ -1,48 +1,99 @@
 import { getSupabaseAdmin } from './_lib/supabase.js';
 import { verifyWebhookSignature } from './_lib/razorpay.js';
-import { noStore } from './_lib/http.js';
 
-async function readRawBody(req) {
-  if (Buffer.isBuffer(req.body)) return req.body;
-  if (typeof req.body === 'string') return Buffer.from(req.body, 'utf8');
-  const chunks = [];
-  for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  if (chunks.length) return Buffer.concat(chunks);
-  if (req.body && typeof req.body === 'object') return Buffer.from(JSON.stringify(req.body), 'utf8');
-  return Buffer.alloc(0);
-}
+export const runtime = 'nodejs';
 
-export default async function handler(req, res) {
-  noStore(res);
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).send('Method not allowed');
+const json = (data, status = 200) => new Response(JSON.stringify(data), {
+  status,
+  headers: {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff'
   }
+});
+
+export async function POST(request) {
   try {
-    const raw = await readRawBody(req);
-    const signature = req.headers['x-razorpay-signature'];
-    if (!verifyWebhookSignature(raw, signature)) return res.status(400).send('Invalid signature');
-    const event = JSON.parse(raw.toString('utf8'));
-    const eventId = String(req.headers['x-razorpay-event-id'] || event.id || '').slice(0, 160) || null;
+    // Razorpay requires the signature to be calculated from the exact raw request body.
+    // Web Request.text() preserves the payload before JSON parsing.
+    const rawText = await request.text();
+    const signature = request.headers.get('x-razorpay-signature') || '';
+    if (!verifyWebhookSignature(Buffer.from(rawText, 'utf8'), signature)) {
+      return new Response('Invalid signature', { status: 400 });
+    }
+
+    const event = JSON.parse(rawText || '{}');
+    const eventId = String(request.headers.get('x-razorpay-event-id') || event.id || '').slice(0, 160) || null;
     const supabase = getSupabaseAdmin();
+
     if (eventId) {
-      const { data: existing } = await supabase.from('payment_events').select('id').eq('event_id', eventId).maybeSingle();
-      if (existing) return res.status(200).json({ ok: true, duplicate: true });
+      const { data: existing, error: lookupError } = await supabase
+        .from('payment_events')
+        .select('id')
+        .eq('event_id', eventId)
+        .maybeSingle();
+      if (lookupError) throw lookupError;
+      if (existing) return json({ ok: true, duplicate: true });
     }
-    await supabase.from('payment_events').insert({ event_id: eventId, event_type: event.event || 'unknown', payload: event });
+
+    const { error: eventError } = await supabase.from('payment_events').insert({
+      event_id: eventId,
+      event_type: event.event || 'unknown',
+      payload: event
+    });
+    if (eventError) throw eventError;
+
     const payment = event?.payload?.payment?.entity;
-    const orderId = payment?.order_id;
+    const order = event?.payload?.order?.entity;
+    const orderId = payment?.order_id || order?.id || null;
+    const paymentId = payment?.id || null;
+
     if (orderId && (event.event === 'payment.captured' || event.event === 'order.paid')) {
-      await supabase.from('support_intents').update({ status: 'paid', razorpay_payment_id: payment?.id || null, verified_at: new Date().toISOString() }).eq('razorpay_order_id', orderId);
-      const { data: intent } = await supabase.from('support_intents').select('id').eq('razorpay_order_id', orderId).maybeSingle();
-      if (intent?.id && payment?.id) await supabase.from('payments').upsert({ intent_id: intent.id, razorpay_order_id: orderId, razorpay_payment_id: payment.id, status: 'webhook_verified', verified_at: new Date().toISOString() }, { onConflict: 'razorpay_payment_id' });
+      const { error: updateError } = await supabase
+        .from('support_intents')
+        .update({
+          status: 'paid',
+          razorpay_payment_id: paymentId,
+          verified_at: new Date().toISOString()
+        })
+        .eq('razorpay_order_id', orderId);
+      if (updateError) throw updateError;
+
+      if (paymentId) {
+        const { data: intent, error: intentError } = await supabase
+          .from('support_intents')
+          .select('id')
+          .eq('razorpay_order_id', orderId)
+          .maybeSingle();
+        if (intentError) throw intentError;
+        if (intent?.id) {
+          const { error: paymentError } = await supabase.from('payments').upsert({
+            intent_id: intent.id,
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+            status: 'webhook_verified',
+            verified_at: new Date().toISOString()
+          }, { onConflict: 'razorpay_payment_id' });
+          if (paymentError) throw paymentError;
+        }
+      }
     }
+
     if (orderId && event.event === 'payment.failed') {
-      await supabase.from('support_intents').update({ status: 'payment_failed', razorpay_payment_id: payment?.id || null }).eq('razorpay_order_id', orderId);
+      const { error: failedError } = await supabase
+        .from('support_intents')
+        .update({ status: 'payment_failed', razorpay_payment_id: paymentId })
+        .eq('razorpay_order_id', orderId);
+      if (failedError) throw failedError;
     }
-    return res.status(200).json({ ok: true });
+
+    return json({ ok: true });
   } catch (error) {
     console.error('razorpay-webhook error', error);
-    return res.status(500).send('Webhook processing failed');
+    return new Response('Webhook processing failed', { status: 500 });
   }
+}
+
+export function GET() {
+  return json({ error: 'Method not allowed' }, 405);
 }

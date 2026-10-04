@@ -1,4 +1,4 @@
--- Mahamagham 2027 V9 support/payment schema.
+-- Mahamagham 2027 V13 support/payment schema.
 -- Run once in the intended Supabase project after review.
 -- Public/anon clients receive no policies; writes happen only through server-side API functions.
 

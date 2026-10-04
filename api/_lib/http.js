@@ -31,3 +31,22 @@ export function isEmail(value) {
   const email = cleanText(value, 254);
   return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+export function applyCors(req, res, methods = 'GET,POST,OPTIONS') {
+  const origin = String(req?.headers?.origin || '');
+  const configured = String(process.env.SITE_ORIGINS || process.env.SITE_ORIGIN || '')
+    .split(',')
+    .map(v => v.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+  if (origin && configured.includes(origin.replace(/\/$/, ''))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', methods);
+  }
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return true;
+  }
+  return false;
+}

@@ -1,8 +1,9 @@
 import { getSupabaseAdmin } from './_lib/supabase.js';
-import { methodNotAllowed, noStore, getJsonBody, cleanText, cleanPhone, isEmail } from './_lib/http.js';
+import { methodNotAllowed, noStore, applyCors, getJsonBody, cleanText, cleanPhone, isEmail } from './_lib/http.js';
 
 export default async function handler(req, res) {
   noStore(res);
+  if (applyCors(req, res, 'POST,OPTIONS')) return;
   if (req.method !== 'POST') return methodNotAllowed(res);
   try {
     const body = getJsonBody(req);
