@@ -98,6 +98,20 @@
       <div class="support-help-actions"><button class="btn btn-green" type="button" data-enquiry-open data-kind="Payment Help" data-category="Payment or booking help">Get Payment Help →</button><a class="btn btn-soft" href="about.html#contact">Contact the Team →</a></div>
     </div>
     <div class="form-card" id="support-form">
+      <div class="visible-payment-box" id="online-payment">
+        <div class="visible-payment-kicker">Secure online payment</div>
+        <h3>Pay or book online</h3>
+        <p class="copy">Choose what you would like to support. Donation accepts an amount you choose; Puja &amp; Seva, Annadanam and Sponsorship use their approved charges when configured.</p>
+        <div class="visible-payment-grid">
+          <button class="visible-payment-option" type="button" data-payment-open data-payment-option="donation-general" data-category="General event fund"><span>Donation</span><small>Choose amount</small></button>
+          <button class="visible-payment-option" type="button" data-payment-open data-payment-option="puja-seva" data-category="Puja &amp; Seva"><span>Puja &amp; Seva</span><small data-payment-price="puja-seva">View charge</small></button>
+          <button class="visible-payment-option" type="button" data-payment-open data-payment-option="annadanam" data-category="Annadanam"><span>Annadanam</span><small data-payment-price="annadanam">View charge</small></button>
+          <button class="visible-payment-option" type="button" data-payment-open data-payment-option="sponsorship-general" data-category="General sponsorship"><span>Sponsorship</span><small data-payment-price="sponsorship-general">View charge</small></button>
+        </div>
+        <button class="btn btn-gold visible-payment-primary" type="button" data-payment-open data-payment-option="donation-general" data-category="General event fund">Make a secure payment →</button>
+        <div class="visible-payment-status" id="visiblePaymentStatus" role="status" aria-live="polite">Checking live payment availability…</div>
+      </div>
+      <div class="support-form-divider"><span>Need assistance instead?</span></div>
       <h3>Support enquiry</h3>
       <p class="copy">For puja, seva, sponsorship, payment assistance or general questions.</p>
       <form data-support-enquiry>

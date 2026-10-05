@@ -1,17 +1,13 @@
-# Mahamagham Premium IA V17
+# Mahamagham Premium IA V18
 
-Final refined package with the original aerial front hero photo clearly visible again.
+V18 adds a clear, visible online-payment entry inside the Support page while retaining the existing Razorpay + Supabase integration.
 
-## V17 updates
-- Restored the **front home hero photo** properly.
-- Kept the **orange/saffron theme**.
-- Applied a **premium low-opacity texture overlay**.
-- Added **subtle depth and text shadow**.
-- Fine-tuned for **mobile, tablet and desktop alignment**.
-- Previous payment / Razorpay / Supabase setup remains unchanged.
+## V18 changes
+- Added a visible **Pay or book online** panel on Support → Payment & Booking Help.
+- Direct options: Donation, Puja & Seva, Annadanam and Sponsorship.
+- Each option opens the existing secure Razorpay checkout modal.
+- Fixed charges are read from the existing payment configuration; donation remains custom amount.
+- Shows live payment availability and configured charge/status on the page.
+- Keeps the orange heritage theme, aerial hero photo, textures, mobile/tablet/desktop responsiveness and existing Supabase enquiry storage.
 
-## Deployment
-Upload this package to GitHub / Vercel as usual.
-
-## Payment setup
-See `PAYMENT_SETUP.md`.
+See `PAYMENT_SETUP.md` for environment variables and live gateway setup.

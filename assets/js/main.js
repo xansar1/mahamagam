@@ -245,6 +245,23 @@ function initSupportPayments(){
     }
   });
 
+  const visiblePaymentStatus=document.getElementById('visiblePaymentStatus');
+  const visiblePriceNodes=document.querySelectorAll('[data-payment-price]');
+  getPaymentConfig().then(cfg=>{
+    if(visiblePaymentStatus){
+      visiblePaymentStatus.textContent=cfg.enabled?'Live online payment is available. Choose an option above to continue securely.':'Online payment is temporarily unavailable until the live gateway is enabled.';
+      visiblePaymentStatus.classList.toggle('ready',Boolean(cfg.enabled));
+      visiblePaymentStatus.classList.toggle('unavailable',!cfg.enabled);
+    }
+    visiblePriceNodes.forEach(node=>{
+      const option=cfg.options?.[node.dataset.paymentPrice];
+      if(!option)return;
+      if(option.customAmount)node.textContent='Choose amount';
+      else if(option.available&&Number(option.amountRupees)>0)node.textContent=`₹${Number(option.amountRupees).toLocaleString('en-IN')}`;
+      else node.textContent='Charge to be confirmed';
+    });
+  }).catch(()=>{});
+
   const requestedOption=new URLSearchParams(location.search).get('pay');
   if(requestedOption)setTimeout(()=>open(requestedOption),120);
 }
