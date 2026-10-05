@@ -221,7 +221,7 @@ function initSupportPayments(){
         key:order.keyId,amount:order.amount,currency:order.currency||'INR',name:'Mahamagham 2027',description:order.description||payload.category,order_id:order.orderId,
         prefill:{name:payload.name,email:payload.email||'',contact:payload.phone},
         notes:{intent_id:order.intentId,category:payload.category,kind:payload.kind,option_key:payload.optionKey},
-        theme:{color:'#073b31'},
+        theme:{color:'#d65a14'},
         handler:async response=>{
           submit.textContent='Verifying payment…';
           showFormStatus(status,'Payment received. Verifying with the server…','info');
